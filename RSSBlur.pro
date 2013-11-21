@@ -16,6 +16,9 @@ OTHER_FILES += qml/RSSBlur.qml \
     qml/cover/CoverPage.qml \
     qml/pages/FirstPage.qml \
     qml/pages/SecondPage.qml \
+    qml/pages/LoginPage.qml \
+    qml/pages/WebView.qml \
+    qml/pages/FeedsPage.qml \
     rpm/RSSBlur.spec \
     rpm/RSSBlur.yaml \
     RSSBlur.desktop

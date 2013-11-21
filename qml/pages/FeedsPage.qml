@@ -11,7 +11,7 @@ Page {
         id: listView
         anchors.fill: parent
         model: feedListModel
-        header: PageHeader { title: "Feeds" }
+        header: PageHeader { title: "News-feeds" }
 
         PullDownMenu {
             MenuItem {
@@ -73,7 +73,7 @@ Page {
         id: feedListModel
     }
     //onPageContainerChanged: populateFeeds()
-    onPageContainerChanged: callNewsBlurApi("reader/feeds", populateFeeds)
+    onPageContainerChanged: callNewsBlurApi("reader/feeds", readFolders)
 
     /**
         The JavaScript functions
@@ -101,9 +101,29 @@ Page {
         doc.open(apiMethod, request)
         doc.send(apiParameters)
     }
-    function populateFeeds(data) {
+    // a wrapper function to pass the data.folders json sub-variable to allow recursive parsing of feed-tree
+    function readFolders(data) {
+        populateFeeds(data.folders, data.feeds)
+    }
+    function populateFeeds(data, feeds, subfolder) {
         console.log("Caught callback from API. Populating feeds list")
+        subfolder = typeof subfolder !== 'undefined' ? subfolder : false;
 
+        for (var item in data) {
+            if (typeof(data[item]) === "object"){
+                if (subfolder) {
+                    console.log("Appending foldername: " + item)
+                    feedListModel.append({"text": "- " +item })
+                }
+                console.log("Parsing recursively: \'" + item+ "\'")
+
+                populateFeeds(data[item], feeds, true)
+            } else {
+                feedListModel.append({"text": feeds[data[item]].feed_title})
+            }
+        }
+
+        /**
         for (var index = 0; index < data.folders.length; index++) {
             if (typeof data.folders[index] === "object") {
                 feedListModel.append({"text": "Folder"})
@@ -115,5 +135,6 @@ Page {
 
         }
         return data
+        */
     }
 }
