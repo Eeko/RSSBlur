@@ -30,10 +30,14 @@ Page {
         }
         VerticalScrollDecorator {}
 
-
+        // defining how individual listItems behave
         delegate: ListItem {
+            //property string imagesource
+            //imagesource: "../resources/oval.png"
             id: listItem
             menu: contextMenuComponent
+            height: Theme.itemSizeSmall
+
             function remove() {
                 remorseAction("Deleting", function() { feedListModel.remove(index) })
             }
@@ -43,14 +47,24 @@ Page {
                     pageStack.push(Qt.resolvedUrl("MenuPage.qml"))
                 }
             }
-            Label {
-                x: Theme.paddingLarge
-                text: (model.index+1) + ". " + model.text
-                anchors.verticalCenter: parent.verticalCenter
-                font.capitalization: Font.Capitalize
-                color: listItem.highlighted ? Theme.highlightColor : Theme.primaryColor
+            // Defining how individual list-items have labels
+            Row {
+                Column {
+                    Image {
+                        id: feedIcon
+                        source: model.imagesource
+                    }
+                }
+                Column {
+                    Label {
+                        x: Theme.paddingLarge
+                        text: model.text
+                        anchors.verticalCenter: parent.verticalCenter
+                        font.capitalization: Font.Capitalize
+                        color: listItem.highlighted ? Theme.highlightColor : Theme.primaryColor
+                    }
+                }
             }
-
             Component {
                 id: contextMenuComponent
                 ContextMenu {
@@ -71,6 +85,14 @@ Page {
     }
     ListModel {
         id: feedListModel
+    }
+
+    Component {
+        id: feedItemDelegate
+        Row {
+            spacing: 10
+            Text { text: feedname }
+        }
     }
     //onPageContainerChanged: populateFeeds()
     onPageContainerChanged: callNewsBlurApi("reader/feeds", readFolders)
@@ -113,7 +135,7 @@ Page {
             if (typeof(data[item]) === "object"){
                 if (subfolder) {
                     console.log("Appending foldername: " + item)
-                    feedListModel.append({"text": "- " +item })
+                    feedListModel.append({"text": "- " +item, "imagesource": "../resources/folder.png" })
                 }
                 console.log("Parsing recursively: \'" + item+ "\'")
 
@@ -123,18 +145,5 @@ Page {
             }
         }
 
-        /**
-        for (var index = 0; index < data.folders.length; index++) {
-            if (typeof data.folders[index] === "object") {
-                feedListModel.append({"text": "Folder"})
-            } else {
-                //feedListModel.append({"text": data.folders[index]})
-                feedListModel.append({"text": data.feeds[data.folders[index]].feed_title})
-
-            }
-
-        }
-        return data
-        */
     }
 }

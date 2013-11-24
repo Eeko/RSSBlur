@@ -21,5 +21,7 @@ OTHER_FILES += qml/RSSBlur.qml \
     qml/pages/FeedsPage.qml \
     rpm/RSSBlur.spec \
     rpm/RSSBlur.yaml \
-    RSSBlur.desktop
+    RSSBlur.desktop \
+    qml/resources/folder.png \
+    qml/resources/oval.png
 
